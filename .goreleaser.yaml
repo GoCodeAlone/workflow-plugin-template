@@ -10,7 +10,6 @@ builds:
     binary: workflow-plugin-TEMPLATE
     env:
       - CGO_ENABLED=0
-      - GOPRIVATE=github.com/GoCodeAlone/*
     goos:
       - linux
       - darwin

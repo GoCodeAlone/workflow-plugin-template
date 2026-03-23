@@ -4,18 +4,14 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-env:
-  GOPRIVATE: github.com/GoCodeAlone/*
 jobs:
   test:
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
-      - name: Configure Git for private repos
-        run: git config --global url."https://x-access-token:${{ secrets.RELEASES_TOKEN }}@github.com/".insteadOf "https://github.com/"
       - run: go build ./...
       - run: go test ./... -v -race -count=1
       - run: go vet ./...
