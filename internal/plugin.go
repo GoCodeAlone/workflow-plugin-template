@@ -1,52 +1,72 @@
+// Package internal implements the workflow-plugin-TEMPLATE plugin.
 package internal
 
 import (
+	"fmt"
+
 	sdk "github.com/GoCodeAlone/workflow/plugin/external/sdk"
 )
 
 // Version is set at build time via -ldflags
 // "-X github.com/GoCodeAlone/workflow-plugin-TEMPLATE/internal.Version=X.Y.Z".
-// Keeping it as a package-level var (rather than baking the string into the
-// Manifest literal) lets goreleaser inject the real release tag so the
-// workflow engine's requires.plugins[].version check passes.
-var Version = "dev"
+// Default is a bare semver so plugin loaders that validate semver accept
+// unreleased dev builds; goreleaser overrides with the real release tag.
+var Version = "0.0.0"
+
+// TEMPLATEPlugin implements sdk.PluginProvider and optionally
+// sdk.ModuleProvider, sdk.StepProvider, sdk.TriggerProvider, etc.
+type TEMPLATEPlugin struct{}
+
+// NewPlugin returns a new plugin instance. main.go calls sdk.Serve(NewPlugin()).
+func NewPlugin() sdk.PluginProvider {
+	return &TEMPLATEPlugin{}
+}
 
 // Manifest returns the plugin metadata used by the workflow engine for
 // discovery and capability negotiation.
-var Manifest = sdk.PluginManifest{
-	Name:        "workflow-plugin-TEMPLATE",
-	Description: "TEMPLATE plugin for the workflow engine",
-	Author:      "GoCodeAlone",
-	License:     "MIT",
-	ModuleTypes: []string{
-		// "example.module_type",
-	},
-	StepTypes: []string{
-		// "step.example_action",
-	},
-}
-
-type plugin struct{}
-
-// NewPlugin creates a new plugin instance.
-func NewPlugin() sdk.PluginProvider {
-	return &plugin{}
-}
-
-func (p *plugin) Manifest() sdk.PluginManifest {
-	m := Manifest
-	m.Version = Version
-	return m
-}
-
-func (p *plugin) ModuleFactories() map[string]sdk.ModuleFactory {
-	return map[string]sdk.ModuleFactory{
-		// "example.module_type": NewExampleModuleFactory(),
+func (p *TEMPLATEPlugin) Manifest() sdk.PluginManifest {
+	return sdk.PluginManifest{
+		Name:        "workflow-plugin-TEMPLATE",
+		Version:     Version,
+		Author:      "GoCodeAlone",
+		Description: "TEMPLATE plugin for the workflow engine",
 	}
 }
 
-func (p *plugin) StepFactories() map[string]sdk.StepFactory {
-	return map[string]sdk.StepFactory{
-		// "step.example_action": NewExampleStepFactory(),
+// ModuleTypes returns the module type names this plugin provides.
+// Remove this method if the plugin does not provide any modules.
+func (p *TEMPLATEPlugin) ModuleTypes() []string {
+	return []string{
+		// "example.module_type",
+	}
+}
+
+// CreateModule creates a module instance of the given type.
+// Remove this method if the plugin does not provide any modules.
+func (p *TEMPLATEPlugin) CreateModule(typeName, name string, config map[string]any) (sdk.ModuleInstance, error) {
+	switch typeName {
+	// case "example.module_type":
+	//     return newExampleModule(name, config)
+	default:
+		return nil, fmt.Errorf("TEMPLATE: unknown module type %q", typeName)
+	}
+}
+
+// StepTypes returns the step type names this plugin provides.
+// Remove this method if the plugin does not provide any steps.
+func (p *TEMPLATEPlugin) StepTypes() []string {
+	return []string{
+		// "step.example_action",
+	}
+}
+
+// CreateStep creates a step instance of the given type.
+// Remove this method if the plugin does not provide any steps.
+func (p *TEMPLATEPlugin) CreateStep(typeName, name string, config map[string]any) (sdk.StepInstance, error) {
+	switch typeName {
+	// case "step.example_action":
+	//     return newExampleStep(name, config), nil
+	default:
+		return nil, fmt.Errorf("TEMPLATE: unknown step type %q", typeName)
 	}
 }
