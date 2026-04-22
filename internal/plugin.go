@@ -4,11 +4,17 @@ import (
 	sdk "github.com/GoCodeAlone/workflow/plugin/external/sdk"
 )
 
+// Version is set at build time via -ldflags
+// "-X github.com/GoCodeAlone/workflow-plugin-TEMPLATE/internal.Version=X.Y.Z".
+// Keeping it as a package-level var (rather than baking the string into the
+// Manifest literal) lets goreleaser inject the real release tag so the
+// workflow engine's requires.plugins[].version check passes.
+var Version = "dev"
+
 // Manifest returns the plugin metadata used by the workflow engine for
 // discovery and capability negotiation.
 var Manifest = sdk.PluginManifest{
 	Name:        "workflow-plugin-TEMPLATE",
-	Version:     "0.1.0",
 	Description: "TEMPLATE plugin for the workflow engine",
 	Author:      "GoCodeAlone",
 	License:     "MIT",
@@ -28,7 +34,9 @@ func NewPlugin() sdk.PluginProvider {
 }
 
 func (p *plugin) Manifest() sdk.PluginManifest {
-	return Manifest
+	m := Manifest
+	m.Version = Version
+	return m
 }
 
 func (p *plugin) ModuleFactories() map[string]sdk.ModuleFactory {

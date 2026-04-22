@@ -12,12 +12,12 @@ func TestNewPlugin_ImplementsPluginProvider(t *testing.T) {
 }
 
 func TestManifest_HasRequiredFields(t *testing.T) {
-	m := internal.Manifest
+	m := internal.NewPlugin().Manifest()
 	if m.Name == "" {
 		t.Error("manifest Name is empty")
 	}
 	if m.Version == "" {
-		t.Error("manifest Version is empty")
+		t.Error("manifest Version is empty — build-time ldflags injection missing")
 	}
 	if m.Description == "" {
 		t.Error("manifest Description is empty")
